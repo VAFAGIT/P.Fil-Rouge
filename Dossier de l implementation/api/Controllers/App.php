@@ -1,6 +1,6 @@
 <?php
 
-class Main extends Controller{
+class App extends Controller{
 
     public function index(){
         $this->render('index');

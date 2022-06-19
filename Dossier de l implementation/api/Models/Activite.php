@@ -1,6 +1,6 @@
 <?php
 
-class Activites extends Model
+class Activite extends Model
 {
     public function __construct()
     {
@@ -19,13 +19,15 @@ class Activites extends Model
 
     public function create($data)
     {
-        $query = 'INSERT INTO ' . $this->table . ' SET  name = :name, o_rder = :o_rder, description = :description ';
+        // print_r($data);
+        // die;
+        $query = "INSERT INTO  $this->table (`name`,`id_travel`,`Order`,`description`)VALUES(:name,:id_travel,:Order,:description)";
         $stmt = $this->_connexion->prepare($query);
 
-        $stmt->bindParam(':name', $data->name);
-        $stmt->bindParam(':ID_voyage', $data->ID_voyage);
-        $stmt->bindParam(':o_rder', $data->o_rder);
-        $stmt->bindParam(':description', $data->description);
+        $stmt->bindParam(':name',$data->name);
+        $stmt->bindParam(':id_travel',$data->id_travel);
+        $stmt->bindParam(':Order',$data->Order);
+        $stmt->bindParam(':description',$data->description);
 
         if ($stmt->execute()) {
             return true;
@@ -46,33 +48,32 @@ class Activites extends Model
         }
     }
 
-    public function update($data, $id)
+    public function update($data)
     {
-        $query = ' UPDATE ' . $this->table . ' SET name = :name, ID_voyage = :ID_voyage, o_rder = :o_rder,  description = :description  WHERE id = :ID ';
-        // die(var_dump($data->Reference));
+        // print_r($data);
+        // die;
+
+        $query = " UPDATE   $this->table SET `name` = :name , `id_travel` = :id_travel , `Order` = :Order ,`description` = :Desc  WHERE `id` = :id " ;
 
         $stmt = $this->_connexion->prepare($query);
-
         $stmt->bindParam(':name', $data->name);
-        $stmt->bindParam(':ID_voyage', $data->ID_voyage);
-        $stmt->bindParam(':o_rder', $data->o_rder);
-        $stmt->bindParam(':description', $data->description);
-
-        $stmt->bindParam(':ID', $id);
-
-        // die(var_dump($data->DateConsult));
-
-        if ($stmt->execute()) {
+        $stmt->bindParam(':id_travel', $data->id_travel);
+        $stmt->bindParam(':Order', $data->Order);
+        $stmt->bindParam(':Desc', $data->description);
+        $stmt->bindParam(':id', $data->id);
+        $result=$stmt->execute();
+      
+        if ( $result) {
             return true;
 
         } else {
-
             return false;
         }
     }
 
-    public function delete($id)
+    public function delete($data)
     {
+        $id=$data->id;
         $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
         $stmt = $this->_connexion->prepare($query);
         $stmt->bindParam(':id', $id);
@@ -84,12 +85,13 @@ class Activites extends Model
         }
     }
 
-    public function get($id)
+    public function get($data)
     {
-        // die($Reference);
-        $query = 'SELECT * FROM ' . $this->table . ' WHERE id =:ID ORDER BY name DESC';
+  
+        $query= "SELECT * FROM   $this->table  WHERE id_travel=:id ";
+        //  = 'SELECT * FROM ' . $this->table . ' WHERE id =:ID ORDER BY name DESC';
         $stmt = $this->_connexion->prepare($query);
-        $stmt->bindParam(':ID', $id);
+        $stmt->bindParam(':id', $data->id_travel);
         if ($stmt->execute()) {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {

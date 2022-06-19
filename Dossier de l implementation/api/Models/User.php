@@ -1,11 +1,11 @@
 <?php
 
-class Pasien extends Model
+class User extends Model
 {
 
     public function __construct()
     {
-        $this->table = 'pasien';
+        $this->table = 'users';
 
         $this->getConnection();
     }
@@ -32,36 +32,50 @@ class Pasien extends Model
             return false;
         }
     }
-    public function create($data, $Reference)
+    public function create($data)
     {
-      
-        $chekEmail = $this->chekEmail($data->Email);
+    //   print_r($data);
+    //   die;
+
+        $chekEmail = $this->chekEmail($data->email);
         if ($chekEmail) {
             return false;
         }
 
-        $query = 'INSERT INTO ' . $this->table . ' SET Reference = :Reference, Nom = :Nom, Prenom = :Prenom , Email = :Email,  Tele = :Tele';
+        $query = "INSERT INTO  $this->table (fullname,password,email)VALUES(:fullname,:password,:email)";
         $stmt = $this->_connexion->prepare($query);
-        $stmt->bindParam(':Reference', $Reference);
-        $stmt->bindParam(':Nom', $data->Nom);
-        $stmt->bindParam(':Prenom', $data->Prenom);
-        $stmt->bindParam(':Email', $data->Email);
-        $stmt->bindParam(':Tele', $data->Tele);
+        $stmt->bindParam(':fullname', $data->fullname);
+        $stmt->bindParam(':email', $data->email);
+        $stmt->bindParam(':password', $data->password);
+
+       if($stmt->execute()){
+           return 1;
+       }
+       else{
+        return 0;
+       }
        
-       return $stmt->execute();
-     
 
     }
 
-    public function get($Reference)
+    public function get($data)
     {
-        $sql = "SELECT * FROM " . $this->table . " WHERE `Reference`='" . $Reference . "'";
-        $query = $this->_connexion->prepare($sql);
-        $query->execute();
-        if (empty($query->fetchAll(PDO::FETCH_ASSOC))) {
-            return false;
+        // print_r($data);
+        // die;
+
+
+        $sql = "SELECT * FROM   $this->table  WHERE email=:email AND password = :password ";
+        $stmt = $this->_connexion->prepare($sql);
+
+        $stmt->bindParam(':email', $data->email);
+        $stmt->bindParam(':password', $data->password);
+        $stmt->execute();
+        $results=$stmt->fetchAll(PDO::FETCH_ASSOC);
+  
+        if (!empty($results)) {
+            return $results;
         } else {
-            return true;
+            return false;
         }
     }
 }

@@ -19,13 +19,14 @@ class Voyage extends Model
 
     public function create($data)
     {
-        $query = 'INSERT INTO ' . $this->table . ' SET  date_D = :date_D, durée = :durée, seats = :seats, price = :price ';
+        $query = "INSERT INTO  $this->table (date_D,duration,seats,price,id_users)VALUES(:date_D,:duration,:seats,:price,:id_users)";
         $stmt = $this->_connexion->prepare($query);
 
         $stmt->bindParam(':date_D', $data->date_D);
-        $stmt->bindParam(':durée', $data->durée);
+        $stmt->bindParam(':duration', $data->duration);
         $stmt->bindParam(':seats', $data->seats);
         $stmt->bindParam(':price', $data->price);
+        $stmt->bindParam(':id_users', $data->id_users);
 
         if ($stmt->execute()) {
             return true;
@@ -46,22 +47,15 @@ class Voyage extends Model
         }
     }
 
-    public function update($data, $id)
+    public function update($data)
     {
-        $query = ' UPDATE ' . $this->table . ' SET date_D = :date_D, durée = :durée, seats = :seats,  price = :price  WHERE id = :ID ';
-        // die(var_dump($data->Reference));
-
+        $query = ' UPDATE ' . $this->table . ' SET date_D = :date_D, duration = :duration, seats = :seats,  price = :price  WHERE id = :id ';
         $stmt = $this->_connexion->prepare($query);
-
         $stmt->bindParam(':date_D', $data->date_D);
-        $stmt->bindParam(':durée', $data->durée);
+        $stmt->bindParam(':duration', $data->duration);
         $stmt->bindParam(':seats', $data->seats);
         $stmt->bindParam(':price', $data->price);
-
-        $stmt->bindParam(':ID', $id);
-
-        // die(var_dump($data->DateConsult));
-
+        $stmt->bindParam(':id', $data->id);
         if ($stmt->execute()) {
             return true;
 
@@ -71,8 +65,9 @@ class Voyage extends Model
         }
     }
 
-    public function delete($id)
+    public function delete($data)
     {
+        $id=$data->id;
         $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
         $stmt = $this->_connexion->prepare($query);
         $stmt->bindParam(':id', $id);
@@ -84,12 +79,13 @@ class Voyage extends Model
         }
     }
 
-    public function get($id)
+    public function get($data)
     {
-        // die($Reference);
-        $query = 'SELECT * FROM ' . $this->table . ' WHERE id =:ID ORDER BY name DESC';
+        $id=$data->id;
+
+        $query = 'SELECT * FROM ' . $this->table . ' WHERE id =:id ORDER BY name DESC';
         $stmt = $this->_connexion->prepare($query);
-        $stmt->bindParam(':ID', $id);
+        $stmt->bindParam(':id', $id);
         if ($stmt->execute()) {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {

@@ -18,46 +18,58 @@ class Reservation extends Model
 
     public function create($data)
     {
-        $query = 'INSERT INTO ' . $this->table . ' SET  date_r = :date_r ';
-        $stmt = $this->_connexion->prepare($query);
-
-        $stmt->bindParam(':date_r', $data->date_r);
-     
-
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
+        $sql = "SELECT * FROM   $this->table  WHERE id_travel=:id_travel AND id_users = :id_users ";
+        $stmt = $this->_connexion->prepare($sql);
+        $stmt->bindParam(':id_travel', $data->id_travel);
+        $stmt->bindParam(':id_users', $data->id_users);
+        $stmt->execute();
+        $foundUser=$stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($foundUser) {
+            return ' already booked';
         }
-    }
 
-  
-    public function update($data, $id)
-    {
-        $query = ' UPDATE ' . $this->table . ' SET date_r = :date_r  WHERE id = :ID ';
-        // die(var_dump($data->Reference));
-
-        $stmt = $this->_connexion->prepare($query);
-
-        $stmt->bindParam(':date_r', $data->date_r);
-        $stmt->bindParam(':ID', $id);
-
-        // die(var_dump($data->DateConsult));
-
-        if ($stmt->execute()) {
-            return true;
-
-        } else {
-
-            return false;
+        $sql = "SELECT seats FROM voyage WHERE id=:id_travel ";
+        $stmt = $this->_connexion->prepare($sql);
+        $stmt->bindParam(':id_travel', $data->id_travel);
+        $stmt->execute();
+        $seats=$stmt->fetch(PDO::FETCH_ASSOC);
+        if ($foundUser) {
+            return 'no seats available';
         }
-    }
 
-    public function delete($id)
+        if(!$foundUser && $seats['seats']!=0){
+            $newSeats=$seats['seats']-1;
+            $query = ' UPDATE voyage SET seats = :seats  WHERE id = :id ';
+            $stmt = $this->_connexion->prepare($query);
+            $stmt->bindParam(':seats', $newSeats);
+            $stmt->bindParam(':id', $data->id_travel);
+            $stmt->execute();
+         
+
+            $query = "INSERT INTO  $this->table ( id_travel , id_users )VALUES( :id_travel , :id_users)";
+            $stmt = $this->_connexion->prepare($query);
+            $stmt->bindParam(':id_travel', $data->id_travel);
+            $stmt->bindParam(':id_users', $data->id_users);
+    
+            if ($stmt->execute()) {
+                return 'everything went good ';
+            } else {
+                return 'something went wrong';
+            }
+
+        } 
+        else {
+            return 'first condition doesnt work ';
+        }
+
+       
+    }
+    public function delete($data)
     {
+
         $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
         $stmt = $this->_connexion->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':id', $data->id);
         if ($stmt->execute()) {
             return true;
         } 
@@ -66,12 +78,24 @@ class Reservation extends Model
         }
     }
 
-    public function get($id)
+    public function getAdmin($data)
     {
-        // die($Reference);
-        $query = 'SELECT * FROM ' . $this->table . ' WHERE id =:ID ORDER BY name DESC';
+        $query = "SELECT voyage.* , reservation.* FROM reservation JOIN voyage ON reservation.id_users = voyage.id_users AND reservation.id_users = :id_users ";
         $stmt = $this->_connexion->prepare($query);
-        $stmt->bindParam(':ID', $id);
+        $stmt->bindParam(':id_users', $data->id_users);
+        if ($stmt->execute()) {
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            return false;
+        }
+    }
+
+    public function getUser($data)
+    {
+        
+        $query = "SELECT voyage.* , reservation.* FROM reservation JOIN voyage ON reservation.id_users = :id_users";
+        $stmt = $this->_connexion->prepare($query);
+        $stmt->bindParam(':id_users', $data->id_users);
         if ($stmt->execute()) {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {

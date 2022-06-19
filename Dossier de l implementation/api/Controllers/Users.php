@@ -15,45 +15,48 @@ class Users extends Controller
      * @return void
      */
 
-    public function uniquReference($lenght = 8)
-    {
-
-
-        $bytes = random_bytes(ceil($lenght / 2));
-        $uid = uniqid($bytes, true);
-
-        return substr(bin2hex($uid), 0, $lenght);
-    }
+   
     public function create()
     {
 
-        $Reference = $this->uniquReference();
+       
 
         $data = json_decode(file_get_contents("php://input"));
+
         
-        $this->loadModel('Pasien');
-        $status = $this->Pasien->create($data, $Reference);
-        // die(var_dump($status));
+        $this->loadModel('User');
+        $status = $this->User->create($data);
+       
         if ($status) {
-            echo json_encode([http_response_code(200), $Reference]);
+         
+            echo json_encode([http_response_code(200)]);
         } else {
-           
+
             echo json_encode([http_response_code(500), "Error"]);
         }
     }
-    public function lgoin()
+
+    public function login()
     {
 
         $data = json_decode(file_get_contents("php://input"));
 
 
-        $this->loadModel('Pasien');
-        $result = $this->Pasien->get($data->Reference);
+        $this->loadModel('User');
+        $result = $this->User->get($data);
 
         if ($result) {
-            echo json_encode(['success', $data->Reference]);
+            if($result[0]['role']==0){
+                echo json_encode(['message'=>'success . is user','data'=>0]);
+            }
+            else{
+                echo json_encode(['message'=>'success . is admin','data'=>1]);
+            }
+            
+            
         } else {
             echo json_encode([http_response_code(500), "Not found"]);
         }
+
     }
 }

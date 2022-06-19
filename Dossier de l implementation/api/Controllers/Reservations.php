@@ -7,7 +7,7 @@ header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,
 
 
 
-class Reservation extends Controller
+class Reservations extends Controller
 {
 
     public function index()
@@ -16,7 +16,7 @@ class Reservation extends Controller
         $this->loadModel('Reservation');
         $reservation = $this->Reservation->getAll();
         echo json_encode($reservation);
-        die();
+       
         $this->render('index', compact('reservation'));
     }
     
@@ -27,47 +27,16 @@ class Reservation extends Controller
         $data = json_decode(file_get_contents("php://input"));
         $acc = $this->Reservation->create($data);
         if ($acc) {
-            $reservation = $this->Reservation->get($data->ID);;
-
-            echo json_encode(['success', $reservation]);
-        } else {
-            echo json_encode(array('status' => 'error'));
-        }
+            echo json_encode($acc);
+        } 
     }
-
-    public function findReservations($id)
-    {
-        $this->loadModel('Reservation');
-        $result = $this->Reservation->find($id);
-        if ($result) {
-            echo json_encode(['success', $result]);
-        } else {
-            echo json_encode(['status', 'error']);
-        }
-    }
-
-    public function update($id)
+    public function delete()
     {
         header('Content-Type: application/json');
         $this->loadModel('Reservation');
         $data = json_decode(file_get_contents("php://input"));
 
-        $acc = $this->Reservation->update($data, $id);
-        // die(var_dump($acc ));
-        if ($acc) {
-
-            echo json_encode('success');
-        } else {
-
-            echo json_encode(array('status' => 'error'));
-        }
-    }
-
-    public function delete($id)
-    {
-        $this->loadModel('Reservation');
-
-        $acc = $this->Reservation->delete($id);
+        $acc = $this->Reservation->delete($data);
         if ($acc) {
             echo json_encode('success');
         } else {
@@ -75,10 +44,31 @@ class Reservation extends Controller
         }
     }
     
-    public function get($id)
+    public function getAdmin()
     {
+        header('Content-Type: application/json');
         $this->loadModel('Reservation');
-        $acc = $this->Reservation->get($id);
+        $data = json_decode(file_get_contents("php://input"));
+        
+        $this->loadModel('Reservation');
+        $acc = $this->Reservation->getAdmin($data);
+        
+        
+        if ($acc) {
+            echo json_encode($acc);
+        } else {
+            echo json_encode(array('status' => 'error'));
+        }
+    }
+
+    public function getUser()
+    {
+        header('Content-Type: application/json');
+        $this->loadModel('Reservation');
+        $data = json_decode(file_get_contents("php://input"));
+        
+        $this->loadModel('Reservation');
+        $acc = $this->Reservation->getUser($data);
 
         if ($acc) {
             echo json_encode($acc);
@@ -87,17 +77,5 @@ class Reservation extends Controller
         }
     }
 
-    public function find($id)
-    {
-        
-        $this->LoadModel('Reservation');
-        $result = $this->Reservation->getOne($id);
-        if ($result) {
-            echo json_encode(['success', $result]);
-        } else {
-            echo json_encode(['status', 'error']);
-        }
-    
-    
-    }
+   
 }
