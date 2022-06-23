@@ -52,29 +52,6 @@ class Review extends Model
         }
     }
 
-    public function getAdmin($data)
-    {
-        
+   
 
-        $query = "SELECT voyage.* , reservation.* FROM reservation JOIN voyage ON reservation.id_users = voyage.id_users AND reservation.id_users = :id_users ";
-        $stmt = $this->_connexion->prepare($query);
-        $stmt->bindParam(':id_users', $data->id_users);
-        if ($stmt->execute()) {
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } else {
-            return false;
-        }
-    }
-
-    public function getUser($data)
-    {
-        $query = "SELECT voyage.* , reservation.* FROM reservation JOIN voyage ON reservation.id_users = :id_users";
-        $stmt = $this->_connexion->prepare($query);
-        $stmt->bindParam(':id_users', $data->id_users);
-        if ($stmt->execute()) {
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } else {
-            return false;
-        }
-    }
 }

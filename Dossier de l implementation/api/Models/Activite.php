@@ -48,22 +48,22 @@ class Activite extends Model
         }
     }
 
-    public function update($data)
+    public function update($data,$id)
     {
-        // print_r($data);
-        // die;
+        // var_dump($data);
+        // die();
 
-        $query = " UPDATE   $this->table SET `name` = :name , `id_travel` = :id_travel , `Order` = :Order ,`description` = :Desc  WHERE `id` = :id " ;
+        $query = "UPDATE $this->table SET `name` = :name , `Order` = :Order ,`description` = :Desc  WHERE `id` = :id " ;
 
         $stmt = $this->_connexion->prepare($query);
         $stmt->bindParam(':name', $data->name);
-        $stmt->bindParam(':id_travel', $data->id_travel);
+        // $stmt->bindParam(':id_travel', $data->id_travel);
         $stmt->bindParam(':Order', $data->Order);
         $stmt->bindParam(':Desc', $data->description);
-        $stmt->bindParam(':id', $data->id);
-        $result=$stmt->execute();
+        $stmt->bindParam(':id', $id);
+        // $result=$stmt->execute();
       
-        if ( $result) {
+        if ($stmt->execute()) {
             return true;
 
         } else {
@@ -71,9 +71,9 @@ class Activite extends Model
         }
     }
 
-    public function delete($data)
+    public function delete($id)
     {
-        $id=$data->id;
+       
         $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
         $stmt = $this->_connexion->prepare($query);
         $stmt->bindParam(':id', $id);
@@ -85,18 +85,34 @@ class Activite extends Model
         }
     }
 
-    public function get($data)
+    public function getallActiv($id)
     {
   
         $query= "SELECT * FROM   $this->table  WHERE id_travel=:id ";
         //  = 'SELECT * FROM ' . $this->table . ' WHERE id =:ID ORDER BY name DESC';
         $stmt = $this->_connexion->prepare($query);
-        $stmt->bindParam(':id', $data->id_travel);
+        $stmt->bindParam(':id', $id);
         if ($stmt->execute()) {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             return false;
         }
     }
+
+
+    public function getOneActiv($id)
+    {
+  
+        $query= "SELECT * FROM   $this->table  WHERE id=:id ";
+        //  = 'SELECT * FROM ' . $this->table . ' WHERE id =:ID ORDER BY name DESC';
+        $stmt = $this->_connexion->prepare($query);
+        $stmt->bindParam(':id', $id);
+        if ($stmt->execute()) {
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            return false;
+        }
+    }
+    
 
 }

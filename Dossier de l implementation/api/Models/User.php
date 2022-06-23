@@ -9,6 +9,7 @@ class User extends Model
 
         $this->getConnection();
     }
+
     /**
      * Retourne un article en fonction de son slug
 
@@ -21,9 +22,10 @@ class User extends Model
         $query->execute();
         return $query->fetch(PDO::FETCH_ASSOC);
     }
+
     public function chekEmail($email)
     {
-        $sql = "SELECT * FROM " . $this->table . " WHERE `Email`='" . $email . "'";
+        $sql = "SELECT * FROM " . $this->table . " WHERE `email`='" . $email . "'";
         $query = $this->_connexion->prepare($sql);
         $query->execute();
         if ($query->rowCount() > 0) {
@@ -32,10 +34,14 @@ class User extends Model
             return false;
         }
     }
+
     public function create($data)
     {
+        
     //   print_r($data);
     //   die;
+    //  var_dump($data);
+    // die();
 
         $chekEmail = $this->chekEmail($data->email);
         if ($chekEmail) {
@@ -54,8 +60,7 @@ class User extends Model
        else{
         return 0;
        }
-       
-
+   
     }
 
     public function get($data)
@@ -78,4 +83,6 @@ class User extends Model
             return false;
         }
     }
+
+    
 }

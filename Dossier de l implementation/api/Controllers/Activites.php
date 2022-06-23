@@ -22,52 +22,46 @@ class Activites extends Controller
     public function addActivites()
     {
         header('Content-Type: application/json');
+
         $this->loadModel('Activite');
+        
         $data = json_decode(file_get_contents("php://input"));
         $acc = $this->Activite->create($data);
 
         if ($acc) {
-         echo json_encode(['success']);
+         echo json_encode(true);
         } else {
             echo json_encode(array('status' => 'error'));
         }
     }
 
-    // public function findActivite($o_rder)
-    // {
-    //     $this->loadModel('Activite');
-    //     $result = $this->Activite->find($o_rder);
-    //     if ($result) {
-    //         echo json_encode(['success', $result]);
-    //     } else {
-    //         echo json_encode(['status', 'error']);
-    //     }
-    // }
+   
 
-    public function update()
+    public function update($id)
     {
         header('Content-Type: application/json');
         $this->loadModel('Activite');
         $data = json_decode(file_get_contents("php://input"));
-
-        $acc = $this->Activite->update($data);
+      
+        
+        $acc = $this->Activite->update($data,$id);
       
         if ($acc) {
 
-            echo json_encode('success');
+            echo json_encode(true);
         } else {
 
-            echo json_encode(array('status' => 'error'));
+            echo json_encode(false);
         }
     }
 
-    public function delete()
+    public function delete($id)
     {
         header('Content-Type: application/json');
         $this->loadModel('Activite');
-        $data = json_decode(file_get_contents("php://input"));
+        // $data = json_decode(file_get_contents("php://input"));
 
-        $acc = $this->Activite->delete($data);
+        $acc = $this->Activite->delete($id);
         if ($acc) {
             echo json_encode('success');
         } else {
@@ -75,12 +69,12 @@ class Activites extends Controller
         }
     }
     
-    public function get()
+    public function getallActiv($id)
     {
         header('Content-Type: application/json');
         $this->loadModel('Activite');
-        $data = json_decode(file_get_contents("php://input"));
-        $acc = $this->Activite->get($data);
+       
+        $acc = $this->Activite->getallActiv($id);
 
         if ($acc) {
             echo json_encode($acc);
@@ -89,12 +83,12 @@ class Activites extends Controller
         }
     }
 
-    public function find($id)
+    public function getOneActiv($id)
     {   
         $this->LoadModel('Activite');
         $result = $this->Activite->getOne($id);
         if ($result) {
-            echo json_encode(['success', $result]);
+            echo json_encode($result);
         } else {
             echo json_encode(['status', 'error']);
         }

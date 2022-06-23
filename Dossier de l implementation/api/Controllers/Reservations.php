@@ -16,7 +16,6 @@ class Reservations extends Controller
         $this->loadModel('Reservation');
         $reservation = $this->Reservation->getAll();
         echo json_encode($reservation);
-       
         $this->render('index', compact('reservation'));
     }
     
@@ -25,6 +24,8 @@ class Reservations extends Controller
         header('Content-Type: application/json');
         $this->loadModel('Reservation');
         $data = json_decode(file_get_contents("php://input"));
+        // print_r($data);
+        // die;
         $acc = $this->Reservation->create($data);
         if ($acc) {
             echo json_encode($acc);
@@ -63,6 +64,7 @@ class Reservations extends Controller
 
     public function getUser()
     {
+        
         header('Content-Type: application/json');
         $this->loadModel('Reservation');
         $data = json_decode(file_get_contents("php://input"));

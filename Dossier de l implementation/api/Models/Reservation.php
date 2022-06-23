@@ -18,6 +18,7 @@ class Reservation extends Model
 
     public function create($data)
     {
+
         $sql = "SELECT * FROM   $this->table  WHERE id_travel=:id_travel AND id_users = :id_users ";
         $stmt = $this->_connexion->prepare($sql);
         $stmt->bindParam(':id_travel', $data->id_travel);
@@ -62,8 +63,8 @@ class Reservation extends Model
             return 'first condition doesnt work ';
         }
 
-       
     }
+
     public function delete($data)
     {
 
@@ -83,6 +84,7 @@ class Reservation extends Model
         $query = "SELECT voyage.* , reservation.* FROM reservation JOIN voyage ON reservation.id_users = voyage.id_users AND reservation.id_users = :id_users ";
         $stmt = $this->_connexion->prepare($query);
         $stmt->bindParam(':id_users', $data->id_users);
+        
         if ($stmt->execute()) {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
@@ -92,8 +94,7 @@ class Reservation extends Model
 
     public function getUser($data)
     {
-        
-        $query = "SELECT voyage.* , reservation.* FROM reservation JOIN voyage ON reservation.id_users = :id_users";
+        $query = "SELECT voyage.* , reservation.* FROM reservation JOIN voyage ON reservation.id_users = voyage.id_users AND reservation.id_users = :id_users ";
         $stmt = $this->_connexion->prepare($query);
         $stmt->bindParam(':id_users', $data->id_users);
         if ($stmt->execute()) {

@@ -44,31 +44,16 @@ class Reviews extends Controller
         }
     }
     
-    public function getAdmin()
-    {
-        header('Content-Type: application/json');
-        $this->loadModel('Reservation');
-        $data = json_decode(file_get_contents("php://input"));
-        
-        $this->loadModel('Reservation');
-        $acc = $this->Reservation->getAdmin($data);
-        
-        
-        if ($acc) {
-            echo json_encode($acc);
-        } else {
-            echo json_encode(array('status' => 'error'));
-        }
-    }
+    
 
-    public function getUser()
+    public function getall()
     {
         header('Content-Type: application/json');
         $this->loadModel('Reservation');
-        $data = json_decode(file_get_contents("php://input"));
         
-        $this->loadModel('Reservation');
-        $acc = $this->Reservation->getUser($data);
+        
+        $this->loadModel('Review');
+        $acc = $this->Review->getAll();
 
         if ($acc) {
             echo json_encode($acc);

@@ -24,11 +24,12 @@ class Voyages extends Controller
         header('Content-Type: application/json');
         $this->loadModel('Voyage');
         $data = json_decode(file_get_contents("php://input"));
-
+        //  var_dump($data);
+        //  die();
         $acc = $this->Voyage->create($data);
         if ($acc) {
            
-            echo json_encode(['success']);
+            echo json_encode(true);
         } else {
             echo json_encode(array('status' => 'error'));
         }
@@ -49,29 +50,29 @@ class Voyages extends Controller
         }
     }
 
-    public function update()
+    public function update($id)
     {
         header('Content-Type: application/json');
         $this->loadModel('Voyage');
         $data = json_decode(file_get_contents("php://input"));
 
-        $acc = $this->Voyage->update($data);
+        $acc = $this->Voyage->update($data,$id);
         if ($acc) {
 
-            echo json_encode('success');
+            echo json_encode(true);
         } else {
 
             echo json_encode(array('status' => 'error'));
         }
     }
 
-    public function delete()
+    public function delete($id)
     {
         header('Content-Type: application/json');
         $this->loadModel('Voyage');
-        $data = json_decode(file_get_contents("php://input"));
+        // $data = json_decode(file_get_contents("php://input"));
 
-        $acc = $this->Voyage->delete($data);
+        $acc = $this->Voyage->delete($id);
         if ($acc) {
             echo json_encode('success');
         } else {
@@ -79,14 +80,13 @@ class Voyages extends Controller
         }
     }
     
-    public function get()
+    public function getall()
     {
         header('Content-Type: application/json');
         $this->loadModel('Voyage');
-        $data = json_decode(file_get_contents("php://input"));
        
-        $acc = $this->Voyage->get($data);
-
+        $acc = $this->Voyage->getAll();
+       
         if ($acc) {
             echo json_encode($acc);
         } else {
@@ -94,16 +94,14 @@ class Voyages extends Controller
         }
     }
 
-    public function find()
+    public function find($id)
     {
         header('Content-Type: application/json');
         $this->loadModel('Voyage');
-        $data = json_decode(file_get_contents("php://input"));
-
         $this->LoadModel('Voyage');
-        $result = $this->Voyage->getOne($data);
+        $result = $this->Voyage->getOne($id);
         if ($result) {
-            echo json_encode(['success', $result]);
+            echo json_encode($result);
         } else {
             echo json_encode(['status', 'error']);
         }

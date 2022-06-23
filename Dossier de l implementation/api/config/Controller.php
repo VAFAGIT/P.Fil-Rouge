@@ -33,7 +33,11 @@ abstract class Controller{
      */
     public function loadModel(string $model){
         require_once(ROOT.'Models/'.$model.'.php');
-        
         $this->$model = new $model();
+    }
+
+    public function getModel(string $model){
+        require_once(ROOT.'Models/'.$model.'.php');
+        return new $model();
     }
 }
